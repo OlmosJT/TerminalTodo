@@ -1,8 +1,7 @@
 module io.olmosjt.terminaltodo {
   requires javafx.controls;
   requires javafx.fxml;
+  requires static lombok;
 
-
-  opens io.olmosjt.terminaltodo to javafx.fxml;
   exports io.olmosjt.terminaltodo;
 }
