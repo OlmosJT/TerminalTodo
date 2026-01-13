@@ -35,8 +35,6 @@ public class TerminalTodo extends Application {
   @Override
   public void start(Stage primaryStage) {
     primaryStage.initStyle(StageStyle.UNDECORATED);
-    primaryStage.setMinWidth(400);
-    primaryStage.setMinHeight(300);
 
     tasks = FXCollections.observableArrayList();
     DataService.loadTasks(tasks);
@@ -77,7 +75,12 @@ public class TerminalTodo extends Application {
     scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
     primaryStage.setTitle("~/daily_plan");
     primaryStage.setScene(scene);
+
     primaryStage.show();
+
+    primaryStage.setWidth(500);
+    primaryStage.setHeight(300);
+
 
     inputField.requestFocus();
   }
@@ -201,8 +204,6 @@ public class TerminalTodo extends Application {
 
     header.setOnMousePressed(e -> { xOffset = e.getSceneX(); yOffset = e.getSceneY(); });
     header.setOnMouseDragged(e -> { stage.setX(e.getScreenX() - xOffset); stage.setY(e.getScreenY() - yOffset); });
-
-    stage.setMinWidth(500);
 
     return header;
   }
