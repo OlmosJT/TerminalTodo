@@ -53,10 +53,8 @@ public class ReportWindow {
     styleDatePicker(startDate);
     styleDatePicker(endDate);
 
-    // FIX 2: Layout Constraints
-    // Allow DatePickers to grow and fill empty space
-    HBox.setHgrow(startDate, Priority.ALWAYS);
-    HBox.setHgrow(endDate, Priority.ALWAYS);
+    HBox.setHgrow(startDate, Priority.SOMETIMES);
+    HBox.setHgrow(endDate, Priority.SOMETIMES);
 
     Label arrow = new Label("->");
     arrow.setMinWidth(Region.USE_PREF_SIZE);
@@ -64,8 +62,8 @@ public class ReportWindow {
     Label runBtn = new Label("[ RUN DIAGNOSTICS ]");
     runBtn.getStyleClass().add("control-btn");
     runBtn.setStyle("-fx-border-color: -accent; -fx-border-width: 1px; -fx-padding: 2 5;");
-    // Prevent button from shrinking
-    runBtn.setMinWidth(Region.USE_PREF_SIZE);
+    runBtn.setMinWidth(140);
+    runBtn.setAlignment(Pos.CENTER);
 
     controls.getChildren().addAll(startDate, arrow, endDate, runBtn);
 

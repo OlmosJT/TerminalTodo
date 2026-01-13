@@ -47,22 +47,29 @@
 
 /* ===================================================== */
 
-.root { -fx-background-color: transparent; }
+.root {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
 
-.label {
+/* GLOBAL TEXT COLOR FIX */
+.label, .text {
     -fx-text-fill: -fg-color;
     -fx-font-family: "Monospaced";
 }
 
-.monitor-bg {
-    -fx-background-color: transparent;
-}
-
+/* FIX: This was missing the background color assignment! */
 .terminal-window {
     -fx-background-color: -bg-color;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
     -fx-border-color: -dim;
     -fx-border-width: 2px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 10, 0, 0, 0);
+}
+
+/* FIX: Report window background */
+.monitor-bg {
+    -fx-background-color: -bg-color;
 }
 
 /* --- Theme Switcher --- */
@@ -76,6 +83,7 @@
 .header { -fx-background-color: -header-bg; -fx-padding: 5 10; -fx-cursor: move; }
 .header-text { -fx-text-fill: -bg-color; -fx-font-weight: bold; -fx-font-family: "Monospaced"; }
 
+/* Ensure header text contrasts correctly based on theme */
 .theme-light .header-text, .theme-light .control-btn { -fx-text-fill: #3c3836; }
 .theme-dark .header-text, .theme-dark .control-btn { -fx-text-fill: #ffffff; }
 .theme-gruvbox .header-text, .theme-gruvbox .control-btn { -fx-text-fill: #1d2021; }
@@ -88,13 +96,25 @@
 .task-list { -fx-background-color: -bg-color; -fx-padding: 10; }
 .task-list .scroll-bar:vertical, .task-list .scroll-bar:horizontal { -fx-pref-width: 0; -fx-pref-height: 0; -fx-opacity: 0; }
 .task-list .scroll-bar .track, .task-list .scroll-bar .thumb { -fx-background-color: transparent; }
-.list-cell { -fx-background-color: -bg-color; -fx-text-fill: -fg-color; -fx-padding: 5 0; -fx-border-color: transparent transparent -selection transparent; -fx-border-style: segments(1, 4); }
-.list-cell:filled:selected, .list-cell:filled:hover { -fx-background-color: -selection; }
+
+.list-view {
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-background-color: -bg-color; /* Ensure list background matches */
+}
+.list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 5 0;
+    -fx-text-fill: -fg-color;
+}
+.list-cell:filled:selected, .list-cell:filled:hover {
+    -fx-background-color: -selection;
+}
 
 /* --- Input --- */
 .input-line { -fx-border-color: -dim transparent transparent transparent; -fx-background-color: -bg-color; }
 .prompt { -fx-text-fill: -accent; -fx-font-weight: bold; -fx-font-family: "Monospaced"; }
-.prompt-warning { -fx-text-fill: -error; } /* Turns prompt red on clear command */
+.prompt-warning { -fx-text-fill: -error; }
 .cmd-input { -fx-background-color: transparent; -fx-text-fill: -fg-color; -fx-font-family: "Monospaced"; }
 
 /* --- Report / Calendar Styles --- */
@@ -125,7 +145,6 @@
 .status-bar { -fx-border-color: -dim transparent transparent transparent; -fx-padding: 5 15; }
 .status-bar .label { -fx-text-fill: -dim; -fx-font-size: 11px; -fx-font-family: "Monospaced"; }
 .resize-handle { -fx-text-fill: -dim; -fx-cursor: se-resize; -fx-padding: 0 0 0 10; }
-
 
 .section-title {
     -fx-text-fill: -accent;
@@ -184,14 +203,13 @@
     -fx-font-size: 10px;
 }
 
-/* Specific theme overrides for the chart */
-.theme-light .chart-bar { -fx-text-fill: -blue; } /* Orange in light theme */
-.theme-dark .chart-bar  { -fx-text-fill: -accent; } /* Green in dark theme */
+.theme-light .chart-bar { -fx-text-fill: -blue; }
+.theme-dark .chart-bar  { -fx-text-fill: -accent; }
 
 .date-picker {
     -fx-background-color: transparent;
     -fx-border-color: -dim;
-    -fx-border-width: 0 0 1px 0; /* Underline only */
+    -fx-border-width: 0 0 1px 0;
 }
 
 .date-picker .text-field {
@@ -206,20 +224,19 @@
     -fx-cursor: hand;
 }
 .date-picker .button .icon {
-    -fx-background-color: -dim; /* Icon color */
+    -fx-background-color: -dim;
 }
 
 /* --- Scrollable Chart --- */
 .chart-scroll {
     -fx-background-color: transparent;
-    -fx-background: transparent; /* Needed for ScrollPane internal */
+    -fx-background: transparent;
     -fx-padding: 0;
 }
 .chart-scroll .viewport {
     -fx-background-color: transparent;
 }
 
-/* Hide scrollbar track, style thumb */
 .chart-scroll .scroll-bar:horizontal .track {
     -fx-background-color: transparent;
 }
@@ -234,7 +251,7 @@
     -fx-font-size: 12px;
     -fx-font-family: "Monospaced";
     -fx-opacity: 0.7;
-    -fx-padding: 10 0 5 0; /* Add some space above */
+    -fx-padding: 10 0 5 0;
 }
 
 /* --- Migrated Task Styling --- */
@@ -245,6 +262,6 @@
 }
 
 .migrated-bracket {
-    -fx-text-fill: -blue; /* Use blue/cyan for the [>] arrow */
+    -fx-text-fill: -blue;
     -fx-font-weight: bold;
 }

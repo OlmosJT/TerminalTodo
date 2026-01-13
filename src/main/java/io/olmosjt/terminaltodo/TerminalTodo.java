@@ -166,6 +166,7 @@ public class TerminalTodo extends Application {
 
     Label reportBtn = new Label("[report]");
     reportBtn.getStyleClass().add("control-btn");
+    reportBtn.setMinWidth(Region.USE_PREF_SIZE);
     // Open the ReportWindow Class
     reportBtn.setOnMouseClicked(e -> {
       String currentTheme = root.getStyleClass().stream()
@@ -178,10 +179,12 @@ public class TerminalTodo extends Application {
 
     Label clearBtn = new Label("[clear]");
     clearBtn.getStyleClass().add("control-btn");
+    clearBtn.setMinWidth(Region.USE_PREF_SIZE);
     clearBtn.setOnMouseClicked(e -> initiateClearSequence());
 
     Label pinBtn = new Label("[^]");
     pinBtn.getStyleClass().add("control-btn");
+    pinBtn.setMinWidth(Region.USE_PREF_SIZE);
     pinBtn.setOnMouseClicked(e -> {
       boolean top = !stage.isAlwaysOnTop();
       stage.setAlwaysOnTop(top);
@@ -191,12 +194,15 @@ public class TerminalTodo extends Application {
 
     Label closeBtn = new Label("[x]");
     closeBtn.getStyleClass().addAll("control-btn", "close-btn");
+    closeBtn.setMinWidth(Region.USE_PREF_SIZE);
     closeBtn.setOnMouseClicked(e -> Platform.exit());
 
     header.getChildren().addAll(themeSwitcher, user, spacer, reportBtn, clearBtn, pinBtn, closeBtn);
 
     header.setOnMousePressed(e -> { xOffset = e.getSceneX(); yOffset = e.getSceneY(); });
     header.setOnMouseDragged(e -> { stage.setX(e.getScreenX() - xOffset); stage.setY(e.getScreenY() - yOffset); });
+
+    stage.setMinWidth(500);
 
     return header;
   }
