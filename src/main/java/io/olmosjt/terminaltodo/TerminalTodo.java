@@ -28,6 +28,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -91,15 +92,27 @@ public class TerminalTodo extends Application {
     root.setCenter(listView);
     root.setBottom(new VBox(inputBox, statusBar));
 
+    inputField.setOnAction(e -> {
+      if (!inputField.getText().isEmpty()) {
+        handleInput(inputField.getText().trim());
+      }
+    });
+
+
+
     // ... key listeners and scene setup ...
     Scene scene = new Scene(root, 700, 500);
     scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
     primaryStage.setTitle("~/daily_plan");
     primaryStage.setScene(scene);
     primaryStage.show();
+
+    inputField.requestFocus();
   }
 
   private void handleInput(String input) {
+    inputField.setStyle("");
+
     if (awaitingClearConfirmation) {
       if (input.equalsIgnoreCase("y") || input.equalsIgnoreCase("yes")) {
         tasks.clear();
@@ -114,12 +127,52 @@ public class TerminalTodo extends Application {
 
     if (input.equalsIgnoreCase("exit")) Platform.exit();
     else if (input.equalsIgnoreCase("clear")) initiateClearSequence();
+    else if (input.equalsIgnoreCase("migrate")) {
+      inputField.clear();
+      performMigration();
+    }
     else {
       tasks.add(new Task(input));
       DataService.saveTasks(tasks);
       inputField.clear();
       updateStatus();
     }
+  }
+
+  private void performMigration() {
+    LocalDate today = LocalDate.now();
+    LocalDate yesterday = today.minusDays(1);
+    int count = 0;
+
+    List<Task> tasksToMigrate = new ArrayList<>();
+
+    for (Task t : tasks) {
+      boolean isFromYesterday = t.getCreatedAt().toLocalDate().isEqual(yesterday);
+
+      if (!t.isDone() && !t.isMigrated() && isFromYesterday) {
+        tasksToMigrate.add(t);
+      }
+    }
+
+    if (tasksToMigrate.isEmpty()) {
+      inputField.setPromptText("No pending tasks from yesterday found.");
+      inputField.setStyle("-fx-prompt-text-fill: -dim;");
+      return;
+    }
+
+    for (Task oldTask : tasksToMigrate) {
+      oldTask.setMigrated(true);
+
+      Task newTask = new Task(oldTask.getText());
+      tasks.add(newTask);
+      count++;
+    }
+
+    DataService.saveTasks(tasks);
+    updateStatus();
+
+    inputField.setPromptText("Migrated " + count + " tasks from yesterday to today.");
+    inputField.setStyle("-fx-prompt-text-fill: -accent;"); // Greenish text for success
   }
 
   private HBox createHeader(Stage stage) {

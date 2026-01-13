@@ -14,12 +14,14 @@ import java.time.LocalDateTime;
 public class Task {
   private String text;
   private boolean isDone;
+  private boolean isMigrated;
   private LocalDateTime createdAt;
   private LocalDateTime completedAt;
 
   public Task(String text) {
     this.text = text;
     this.isDone = false;
+    this.isMigrated = false;
     this.createdAt = LocalDateTime.now();
   }
 
