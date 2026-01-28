@@ -1,267 +1,101 @@
-/* ================= THEME DEFINITIONS ================= */
+/* --- Themes & Colors --- */
+.theme-gruvbox { -bg-color: #1d2021; -fg-color: #ebdbb2; -accent: #98971a; -dim: #928374; -error: #cc241d; -selection: #3c3836; -blue: #458588; }
+.theme-light   { -bg-color: #fbf1c7; -fg-color: #3c3836; -accent: #076678; -dim: #a89984; -error: #9d0006; -selection: #ebdbb2; -blue: #d65d0e; }
+.theme-dark    { -bg-color: #000000; -fg-color: #ffffff; -accent: #00ff00; -dim: #808080; -error: #ff0000; -selection: #333333; -blue: #00ffff; }
+.theme-orange  { -bg-color: #282828; -fg-color: #ebdbb2; -accent: #fe8019; -dim: #928374; -error: #fb4934; -selection: #3c3836; -blue: #83a598; }
 
-.theme-gruvbox {
-    -bg-color: #1d2021;
-    -fg-color: #ebdbb2;
-    -accent: #98971a;
-    -dim: #928374;
-    -error: #cc241d;
-    -selection: #3c3836;
-    -blue: #458588;
-    -header-bg: #928374;
-    -cal-empty: #3c3836;
-    -cal-full: #98971a;
-    -cal-mid: #fabd2f;
-    -cal-bad: #cc241d;
-}
+.root { -fx-font-family: "Monospaced"; -fx-font-size: 13px; }
+.terminal-window { -fx-background-color: -bg-color; -fx-padding: 15; }
 
-.theme-light {
-    -bg-color: #fbf1c7;
-    -fg-color: #3c3836;
-    -accent: #076678;
-    -dim: #a89984;
-    -error: #9d0006;
-    -selection: #ebdbb2;
-    -blue: #d65d0e;
-    -header-bg: #d5c4a1;
-    -cal-empty: #ebdbb2;
-    -cal-full: #427b58;
-    -cal-mid: #b57614;
-    -cal-bad: #9d0006;
-}
+/* --- Task List & Cells --- */
+.list-view { -fx-background-color: transparent; }
+.list-cell { -fx-background-color: transparent; -fx-text-fill: -fg-color; -fx-padding: 5 0; }
+.list-cell:filled:selected, .list-cell:filled:hover { -fx-background-color: -selection; }
 
-.theme-dark {
-    -bg-color: #000000;
-    -fg-color: #ffffff;
-    -accent: #00ff00;
-    -dim: #808080;
-    -error: #ff0000;
-    -selection: #333333;
-    -blue: #00ffff;
-    -header-bg: #333333;
-    -cal-empty: #333333;
-    -cal-full: #00ff00;
-    -cal-mid: #ffff00;
-    -cal-bad: #ff0000;
-}
+/* Priority Colors (Swapped: Normal is Blue/Dim, Low is Default) */
+.priority-normal   { -fx-text-fill: -blue; -fx-opacity: 0.7; }
+.priority-low      { -fx-text-fill: -fg-color; -fx-opacity: 1.0; }
+.priority-high     { -fx-text-fill: #fabd2f; -fx-font-weight: bold; }
+.priority-critical { -fx-text-fill: -error; -fx-font-weight: bold; -fx-underline: true; }
 
-/* ===================================================== */
-
-.root {
-    -fx-focus-color: transparent;
-    -fx-faint-focus-color: transparent;
-}
-
-/* GLOBAL TEXT COLOR FIX */
-.label, .text {
-    -fx-text-fill: -fg-color;
-    -fx-font-family: "Monospaced";
-}
-
-/* FIX: This was missing the background color assignment! */
-.terminal-window {
-    -fx-background-color: -bg-color;
-    -fx-background-insets: 0;
-    -fx-border-insets: 0;
-    -fx-border-color: -dim;
-    -fx-border-width: 2px;
-}
-
-/* FIX: Report window background */
-.monitor-bg {
-    -fx-background-color: -bg-color;
-}
-
-/* --- Theme Switcher --- */
-.theme-circle { -fx-cursor: hand; -fx-stroke: -dim; -fx-stroke-width: 1px; }
-.theme-circle:hover { -fx-scale-x: 1.2; -fx-scale-y: 1.2; }
-.theme-gruvbox-btn { -fx-fill: #1d2021; }
-.theme-light-btn   { -fx-fill: #fbf1c7; }
-.theme-dark-btn    { -fx-fill: #000000; }
-
-/* --- Header --- */
-.header { -fx-background-color: -header-bg; -fx-padding: 5 10; -fx-cursor: move; }
-.header-text { -fx-text-fill: -bg-color; -fx-font-weight: bold; -fx-font-family: "Monospaced"; }
-
-/* Ensure header text contrasts correctly based on theme */
-.theme-light .header-text, .theme-light .control-btn { -fx-text-fill: #3c3836; }
-.theme-dark .header-text, .theme-dark .control-btn { -fx-text-fill: #ffffff; }
-.theme-gruvbox .header-text, .theme-gruvbox .control-btn { -fx-text-fill: #1d2021; }
-
-.control-btn { -fx-cursor: hand; -fx-font-weight: bold; -fx-font-family: "Monospaced"; -fx-padding: 0 5; }
-.close-btn:hover { -fx-background-color: -error; -fx-text-fill: #fff; }
-.control-btn.active { -fx-text-fill: -accent; -fx-background-color: -bg-color; }
-
-/* --- List --- */
-.task-list { -fx-background-color: -bg-color; -fx-padding: 10; }
-.task-list .scroll-bar:vertical, .task-list .scroll-bar:horizontal { -fx-pref-width: 0; -fx-pref-height: 0; -fx-opacity: 0; }
-.task-list .scroll-bar .track, .task-list .scroll-bar .thumb { -fx-background-color: transparent; }
-
-.list-view {
-    -fx-background-insets: 0;
-    -fx-padding: 0;
-    -fx-background-color: -bg-color; /* Ensure list background matches */
-}
-.list-cell {
-    -fx-background-color: transparent;
-    -fx-padding: 5 0;
-    -fx-text-fill: -fg-color;
-}
-.list-cell:filled:selected, .list-cell:filled:hover {
-    -fx-background-color: -selection;
-}
-
-/* --- Input --- */
-.input-line { -fx-border-color: -dim transparent transparent transparent; -fx-background-color: -bg-color; }
-.prompt { -fx-text-fill: -accent; -fx-font-weight: bold; -fx-font-family: "Monospaced"; }
-.prompt-warning { -fx-text-fill: -error; }
-.cmd-input { -fx-background-color: transparent; -fx-text-fill: -fg-color; -fx-font-family: "Monospaced"; }
-
-/* --- Report / Calendar Styles --- */
-.calendar-cell {
-    -fx-font-family: "Monospaced";
-    -fx-text-fill: -fg-color;
-    -fx-border-color: -dim;
-    -fx-border-width: 1;
-    -fx-cursor: hand;
-}
-.calendar-cell:hover { -fx-border-color: -fg-color; }
-
-.cell-empty      { -fx-background-color: -cal-empty; -fx-opacity: 0.5; }
-.cell-perfect    { -fx-background-color: -cal-full; -fx-text-fill: -bg-color; -fx-font-weight: bold; }
-.cell-progress   { -fx-background-color: -cal-mid; -fx-text-fill: -bg-color; -fx-font-weight: bold; }
-.cell-incomplete { -fx-background-color: -cal-bad; -fx-text-fill: -bg-color; -fx-font-weight: bold; }
-
-/* --- Common Text --- */
-.time-stamp { -fx-text-fill: -blue; -fx-font-size: 11px; -fx-font-family: "Monospaced"; }
-.completed-time { -fx-text-fill: -dim; }
-.bracket { -fx-text-fill: -dim; -fx-font-weight: bold; -fx-font-family: "Monospaced"; }
-.completed-bracket { -fx-text-fill: -accent; }
-.task-text { -fx-text-fill: -fg-color; -fx-font-family: "Monospaced"; }
 .task-text.completed { -fx-text-fill: -dim; -fx-strikethrough: true; }
-.rm-btn { -fx-text-fill: -error; -fx-cursor: hand; -fx-opacity: 0; -fx-font-family: "Monospaced"; }
-.list-cell:hover .rm-btn { -fx-opacity: 1; }
+.bracket { -fx-text-fill: -accent; -fx-font-weight: bold; }
+.time-stamp { -fx-text-fill: -blue; -fx-font-size: 11px; }
 
-.status-bar { -fx-border-color: -dim transparent transparent transparent; -fx-padding: 5 15; }
-.status-bar .label { -fx-text-fill: -dim; -fx-font-size: 11px; -fx-font-family: "Monospaced"; }
-.resize-handle { -fx-text-fill: -dim; -fx-cursor: se-resize; -fx-padding: 0 0 0 10; }
-
-.section-title {
-    -fx-text-fill: -accent;
-    -fx-font-weight: bold;
-    -fx-font-family: "Monospaced";
-    -fx-underline: true;
-}
-
-.stat-key {
+/* Centered Date Separator */
+.date-separator {
     -fx-text-fill: -dim;
+    -fx-padding: 15 0 5 0;
+    -fx-alignment: center;
+}
+
+/* --- [rm] Button Behavior --- */
+.rm-btn {
+    -fx-text-fill: -error;
+    -fx-cursor: hand;
+    -fx-opacity: 0;
     -fx-font-weight: bold;
-    -fx-font-family: "Monospaced";
+}
+.list-cell:hover .rm-btn {
+    -fx-opacity: 1;
 }
 
-.stat-value {
-    -fx-text-fill: -fg-color;
-    -fx-font-family: "Monospaced";
-}
-
-/* Retro Progress Bar */
-.monitor-progress .track {
-    -fx-background-color: -selection;
-    -fx-background-insets: 0;
-    -fx-background-radius: 0;
-}
-.monitor-progress .bar {
-    -fx-background-color: -accent;
-    -fx-background-insets: 0;
-    -fx-background-radius: 0;
-}
-
-/* Histogram Chart */
-.chart-bar {
-    -fx-text-fill: -blue;
-    -fx-font-family: "Monospaced";
-    -fx-font-weight: bold;
-    -fx-alignment: BOTTOM-CENTER;
-}
-.chart-label {
-    -fx-text-fill: -dim;
-    -fx-font-size: 9px;
-    -fx-font-family: "Monospaced";
-}
-
-/* Log Console */
-.log-console {
-    -fx-background-color: rgba(0,0,0,0.2);
-    -fx-padding: 5;
-    -fx-border-color: -dim;
-    -fx-border-style: dotted;
-}
-
-.log-text {
-    -fx-text-fill: -fg-color;
-    -fx-font-family: "Monospaced";
-    -fx-font-size: 10px;
-}
-
-.theme-light .chart-bar { -fx-text-fill: -blue; }
-.theme-dark .chart-bar  { -fx-text-fill: -accent; }
-
-.date-picker {
+/* --- Input Area --- */
+.input-line { -fx-border-color: -dim transparent transparent transparent; -fx-padding: 15 0 0 0; }
+.prompt { -fx-text-fill: -accent; -fx-font-weight: bold; }
+.cmd-input {
     -fx-background-color: transparent;
-    -fx-border-color: -dim;
+    -fx-text-fill: -fg-color;
+    -fx-border-color: transparent transparent -accent transparent;
     -fx-border-width: 0 0 1px 0;
 }
 
-.date-picker .text-field {
-    -fx-background-color: transparent;
+/* --- Report Console --- */
+.log-console { -fx-background-color: rgba(0,0,0,0.1); -fx-padding: 10; -fx-border-color: -dim; -fx-border-style: dashed; }
+
+.input-line {
+    -fx-border-color: -dim transparent transparent transparent;
+    -fx-padding: 10 15; /* More breathable padding */
+}
+
+/* FIX: Alignment adjustment for the Dollar Sign */
+.prompt {
     -fx-text-fill: -accent;
-    -fx-font-family: "Monospaced";
     -fx-font-weight: bold;
+    -fx-padding: 2 0 0 0; /* Move the $ down slightly */
 }
 
-.date-picker .button {
+.cmd-input {
     -fx-background-color: transparent;
-    -fx-cursor: hand;
-}
-.date-picker .button .icon {
-    -fx-background-color: -dim;
+    -fx-text-fill: -fg-color;
+    -fx-border-color: transparent transparent -accent transparent;
+    -fx-border-width: 0 0 1px 0;
+    -fx-padding: 5 0;
 }
 
-/* --- Scrollable Chart --- */
-.chart-scroll {
-    -fx-background-color: transparent;
-    -fx-background: transparent;
-    -fx-padding: 0;
-}
-.chart-scroll .viewport {
-    -fx-background-color: transparent;
-}
-
-.chart-scroll .scroll-bar:horizontal .track {
-    -fx-background-color: transparent;
-}
-.chart-scroll .scroll-bar:horizontal .thumb {
-    -fx-background-color: -dim;
-    -fx-background-radius: 0;
-}
-
-/* --- Date Separator --- */
-.date-separator {
+/* FUN PLACEHOLDER STYLE */
+.placeholder-text {
     -fx-text-fill: -dim;
-    -fx-font-size: 12px;
     -fx-font-family: "Monospaced";
-    -fx-opacity: 0.7;
-    -fx-padding: 10 0 5 0;
-}
-
-/* --- Migrated Task Styling --- */
-.migrated-text {
-    -fx-text-fill: -dim;
-    -fx-font-style: italic;
+    -fx-font-size: 12px;
+    -fx-text-alignment: center;
+    -fx-line-spacing: 10;
     -fx-opacity: 0.5;
 }
 
-.migrated-bracket {
-    -fx-text-fill: -blue;
-    -fx-font-weight: bold;
+/* Centered Date Separator remains centered */
+.date-separator {
+    -fx-text-fill: -dim;
+    -fx-padding: 15 0 5 0;
+    -fx-alignment: center;
 }
+
+/* Swapped Colors per previous turn */
+.priority-normal   { -fx-text-fill: -blue; -fx-opacity: 0.7; }
+.priority-low      { -fx-text-fill: -fg-color; -fx-opacity: 1.0; }
+.priority-high     { -fx-text-fill: #fabd2f; -fx-font-weight: bold; }
+.priority-critical { -fx-text-fill: -error; -fx-font-weight: bold; -fx-underline: true; }
+
+/* [rm] visibility */
+.rm-btn { -fx-text-fill: -error; -fx-cursor: hand; -fx-opacity: 0; }
+.list-cell:hover .rm-btn { -fx-opacity: 1; }

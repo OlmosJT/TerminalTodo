@@ -19,53 +19,51 @@ public class DataService {
     if (Files.exists(path)) {
       try (Stream<String> lines = Files.lines(path)) {
         lines.forEach(line -> {
-          String[] parts = line.split("\\|", 4);
-          if (parts.length == 4) {
-            // Parse Status: 0=Todo, 1=Done, 2=Migrated
-            int statusInt = 0;
-            try {
-              statusInt = Integer.parseInt(parts[0]);
-            } catch (NumberFormatException e) {
-              /* legacy */
+          String[] parts = line.split("\\|", 5); // Updated to 5 parts
+          if (parts.length >= 4) {
+            int statusInt = Integer.parseInt(parts[0]);
+            LocalDateTime created = parts[1].equals("null") ? LocalDateTime.now() : LocalDateTime.parse(parts[1], FILE_FMT);
+            LocalDateTime completed = parts[2].equals("null") ? null : LocalDateTime.parse(parts[2], FILE_FMT);
+
+            // Handle priority and text
+            Task.Priority priority = Task.Priority.NORMAL;
+            String taskText;
+            if (parts.length == 5) {
+              priority = Task.Priority.valueOf(parts[3]);
+              taskText = parts[4];
+            } else {
+              taskText = parts[3];
             }
 
-            boolean isDone = (statusInt == 1);
-            boolean isMigrated = (statusInt == 2);
-
-            LocalDateTime created =
-                parts[1].equals("null")
-                    ? LocalDateTime.now()
-                    : LocalDateTime.parse(parts[1], FILE_FMT);
-
-            LocalDateTime completed =
-                parts[2].equals("null")
-                    ? null
-                    : LocalDateTime.parse(parts[2], FILE_FMT);
-
-            Task t = new Task(parts[3]);
-            t.setDone(isDone);
-            t.setMigrated(isMigrated);
+            Task t = new Task(taskText, Task.Priority.NORMAL);
+            t.setDone(statusInt == 1);
+            t.setMigrated(statusInt == 2);
             t.setCreatedAt(created);
             t.setCompletedAt(completed);
+            t.setPriority(priority);
             tasks.add(t);
           }
         });
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+      } catch (Exception e) { e.printStackTrace(); }
     }
   }
 
   public static void saveTasks(ObservableList<Task> tasks) {
     try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(FILE_PATH))) {
       for (Task t : tasks) {
-        // Save 2 for migrated, 1 for done, 0 for todo
-        String status = t.isMigrated() ? "2" : (t.isDone() ? "1" : "0");
-        String created = t.getCreatedAt().format(FILE_FMT);
-        String completed = t.getCompletedAt() == null ? "null" : t.getCompletedAt().format(FILE_FMT);
-        writer.write(status + "|" + created + "|" + completed + "|" + t.getText());
-        writer.newLine();
+        writeTask(writer, t, false);
+        for (Task sub : t.getSubTasks()) {
+          writeTask(writer, sub, true);
+        }
       }
     } catch (IOException e) { e.printStackTrace(); }
+  }
+
+  private static void writeTask(BufferedWriter writer, Task t, boolean isSub) throws IOException {
+    String prefix = isSub ? "SUB|" : "";
+    String status = t.isMigrated() ? "2" : (t.isDone() ? "1" : "0");
+    writer.write(String.format("%s%s|%s|%s|%s|%s",
+        prefix, status, t.getCreatedAt(), t.getCompletedAt(), t.getPriority(), t.getText()));
+    writer.newLine();
   }
 }
