@@ -1,4 +1,4 @@
-package io.olmosjt.terminaltodo;
+package io.olmosjt.terminaltodo.backend;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

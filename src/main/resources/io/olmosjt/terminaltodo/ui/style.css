@@ -99,3 +99,11 @@
 /* [rm] visibility */
 .rm-btn { -fx-text-fill: -error; -fx-cursor: hand; -fx-opacity: 0; }
 .list-cell:hover .rm-btn { -fx-opacity: 1; }
+
+.task-scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent; /* Needed for ScrollPane internal viewport */
+}
+.task-scroll-pane .viewport {
+    -fx-background-color: transparent;
+}

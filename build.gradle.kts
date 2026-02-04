@@ -42,7 +42,7 @@ javafx {
 dependencies {
     compileOnly("org.projectlombok:lombok:1.18.42")
     annotationProcessor("org.projectlombok:lombok:1.18.42")
-
+    implementation("com.h2database:h2:2.2.224")
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 }
@@ -51,12 +51,11 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-// ADDED: Configuration for the Fat JAR
+
 tasks.shadowJar {
     archiveBaseName.set("TerminalTodo")
     archiveClassifier.set("")
     archiveVersion.set("")
-    // Merge service files to ensure JavaFX loads correctly
     mergeServiceFiles()
 }
 

@@ -1,5 +1,6 @@
-package io.olmosjt.terminaltodo;
+package io.olmosjt.terminaltodo.ui;
 
+import io.olmosjt.terminaltodo.backend.Task;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
