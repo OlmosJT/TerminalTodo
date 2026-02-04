@@ -1,68 +1,100 @@
-/* --- Themes & Colors --- */
-.theme-gruvbox { -bg-color: #1d2021; -fg-color: #ebdbb2; -accent: #98971a; -dim: #928374; -error: #cc241d; -selection: #3c3836; -blue: #458588; }
-.theme-light   { -bg-color: #fbf1c7; -fg-color: #3c3836; -accent: #076678; -dim: #a89984; -error: #9d0006; -selection: #ebdbb2; -blue: #d65d0e; }
-.theme-dark    { -bg-color: #000000; -fg-color: #ffffff; -accent: #00ff00; -dim: #808080; -error: #ff0000; -selection: #333333; -blue: #00ffff; }
-.theme-orange  { -bg-color: #282828; -fg-color: #ebdbb2; -accent: #fe8019; -dim: #928374; -error: #fb4934; -selection: #3c3836; -blue: #83a598; }
+.theme-dark {
+    -bg-color: #000000;
+    -fg-color: #ffffff;
+    -accent: #00ff00;
+    -dim: #808080;
+    -error: #ff0000;
+    -selection: #333333;
+    -blue: #00ffff;
+}
 
-.root { -fx-font-family: "Monospaced"; -fx-font-size: 13px; }
-.terminal-window { -fx-background-color: -bg-color; -fx-padding: 15; }
+.root {
+    -fx-font-family: "Monospaced";
+    -fx-font-size: 13px;
+}
 
-/* --- Task List & Cells --- */
-.list-view { -fx-background-color: transparent; }
-.list-cell { -fx-background-color: transparent; -fx-text-fill: -fg-color; -fx-padding: 5 0; }
-.list-cell:filled:selected, .list-cell:filled:hover { -fx-background-color: -selection; }
+.terminal-window {
+    -fx-background-color: -bg-color;
+    -fx-padding: 15;
+}
 
-/* Priority Colors (Swapped: Normal is Blue/Dim, Low is Default) */
-.priority-normal   { -fx-text-fill: -blue; -fx-opacity: 0.7; }
-.priority-low      { -fx-text-fill: -fg-color; -fx-opacity: 1.0; }
-.priority-high     { -fx-text-fill: #fabd2f; -fx-font-weight: bold; }
-.priority-critical { -fx-text-fill: -error; -fx-font-weight: bold; -fx-underline: true; }
+.list-view {
+    -fx-background-color: transparent;
+}
 
-.task-text.completed { -fx-text-fill: -dim; -fx-strikethrough: true; }
-.bracket { -fx-text-fill: -accent; -fx-font-weight: bold; }
-.time-stamp { -fx-text-fill: -blue; -fx-font-size: 11px; }
+.list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: -fg-color;
+    -fx-padding: 5 0;
+}
 
-/* Centered Date Separator */
+.list-cell:filled:selected, .list-cell:filled:hover {
+    -fx-background-color: -selection;
+}
+
+/* Priority Colors */
+.priority-normal {
+    -fx-text-fill: -blue;
+    -fx-opacity: 0.7;
+}
+
+.priority-low {
+    -fx-text-fill: -fg-color;
+    -fx-opacity: 1.0;
+}
+
+.priority-high {
+    -fx-text-fill: #fabd2f;
+    -fx-font-weight: bold;
+}
+
+.priority-critical {
+    -fx-text-fill: -error;
+    -fx-font-weight: bold;
+    -fx-underline: true;
+}
+
+.task-text.completed {
+    -fx-text-fill: -dim;
+    -fx-strikethrough: true;
+}
+
+.bracket {
+    -fx-text-fill: -accent;
+    -fx-font-weight: bold;
+}
+
+.time-stamp {
+    -fx-text-fill: -blue;
+    -fx-font-size: 11px;
+}
+
 .date-separator {
     -fx-text-fill: -dim;
     -fx-padding: 15 0 5 0;
     -fx-alignment: center;
 }
 
-/* --- [rm] Button Behavior --- */
 .rm-btn {
-    -fx-text-fill: -error;
+    -fx-text-fill: #ff5555;
     -fx-cursor: hand;
     -fx-opacity: 0;
     -fx-font-weight: bold;
 }
-.list-cell:hover .rm-btn {
+
+.task-line:hover .rm-btn {
     -fx-opacity: 1;
 }
 
-/* --- Input Area --- */
-.input-line { -fx-border-color: -dim transparent transparent transparent; -fx-padding: 15 0 0 0; }
-.prompt { -fx-text-fill: -accent; -fx-font-weight: bold; }
-.cmd-input {
-    -fx-background-color: transparent;
-    -fx-text-fill: -fg-color;
-    -fx-border-color: transparent transparent -accent transparent;
-    -fx-border-width: 0 0 1px 0;
-}
-
-/* --- Report Console --- */
-.log-console { -fx-background-color: rgba(0,0,0,0.1); -fx-padding: 10; -fx-border-color: -dim; -fx-border-style: dashed; }
-
 .input-line {
     -fx-border-color: -dim transparent transparent transparent;
-    -fx-padding: 10 15; /* More breathable padding */
+    -fx-padding: 10 15;
 }
 
-/* FIX: Alignment adjustment for the Dollar Sign */
 .prompt {
     -fx-text-fill: -accent;
     -fx-font-weight: bold;
-    -fx-padding: 2 0 0 0; /* Move the $ down slightly */
+    -fx-padding: 2 0 0 0;
 }
 
 .cmd-input {
@@ -73,7 +105,6 @@
     -fx-padding: 5 0;
 }
 
-/* FUN PLACEHOLDER STYLE */
 .placeholder-text {
     -fx-text-fill: -dim;
     -fx-font-family: "Monospaced";
@@ -83,27 +114,63 @@
     -fx-opacity: 0.5;
 }
 
-/* Centered Date Separator remains centered */
-.date-separator {
-    -fx-text-fill: -dim;
-    -fx-padding: 15 0 5 0;
-    -fx-alignment: center;
+.log-console {
+    -fx-background-color: rgba(0, 0, 0, 0.1);
+    -fx-padding: 10;
+    -fx-border-color: -dim;
+    -fx-border-style: dashed;
 }
-
-/* Swapped Colors per previous turn */
-.priority-normal   { -fx-text-fill: -blue; -fx-opacity: 0.7; }
-.priority-low      { -fx-text-fill: -fg-color; -fx-opacity: 1.0; }
-.priority-high     { -fx-text-fill: #fabd2f; -fx-font-weight: bold; }
-.priority-critical { -fx-text-fill: -error; -fx-font-weight: bold; -fx-underline: true; }
-
-/* [rm] visibility */
-.rm-btn { -fx-text-fill: -error; -fx-cursor: hand; -fx-opacity: 0; }
-.list-cell:hover .rm-btn { -fx-opacity: 1; }
 
 .task-scroll-pane {
     -fx-background-color: transparent;
-    -fx-background: transparent; /* Needed for ScrollPane internal viewport */
+    -fx-background: transparent;
 }
+
 .task-scroll-pane .viewport {
     -fx-background-color: transparent;
+}
+
+.dialog-pane {
+    -fx-background-color: -bg-color;
+    -fx-border-color: -accent;
+    -fx-border-width: 1px;
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: -bg-color;
+}
+
+.dialog-pane .header-panel .label {
+    -fx-text-fill: -accent;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+.dialog-pane .content .label {
+    -fx-text-fill: -fg-color;
+}
+
+.help-console {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 5;
+    -fx-text-fill: -fg-color;
+    -fx-font-family: "Monospaced";
+}
+
+.help-console .content {
+    -fx-background-color: -bg-color;
+}
+
+.help-console .viewport {
+    -fx-background-color: -bg-color;
+}
+
+.help-console .scroll-bar:vertical,
+.help-console .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.help-console .scroll-bar .thumb {
+    -fx-background-color: -dim;
 }

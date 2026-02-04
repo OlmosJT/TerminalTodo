@@ -23,7 +23,7 @@ public class InputPanel extends HBox {
 
     inputField = new TextField();
     inputField.getStyleClass().add("cmd-input");
-    inputField.setPromptText("!theme, !report, !clear, !s [ID] [text]");
+    inputField.setPromptText("type your new task here...");
 
     inputField.setOnAction(e -> handleInput());
 

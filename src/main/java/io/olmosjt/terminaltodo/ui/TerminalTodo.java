@@ -7,28 +7,35 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TerminalTodo extends Application {
   private ObservableList<Task> tasks;
   private BorderPane root;
-  private TaskListPanel taskListPanel; // Now our custom ScrollPane
+  private TaskListPanel taskListPanel;
+  private Stage primaryStage;
+
+  private static final Pattern CMD_PATTERN = Pattern.compile("^(.*?)\\s+\\[([a-zA-Z0-9:]+)\\]$");
 
   public static void main(String[] args) { launch(args); }
 
   @Override
   public void start(Stage primaryStage) {
-    // Data Load
+    this.primaryStage = primaryStage;
+
     tasks = FXCollections.observableArrayList();
     DataService.loadTasks(tasks);
 
-    // Layout
     root = new BorderPane();
-    String currentTheme = DataService.getTheme();
+    String currentTheme = "theme-dark";
     root.getStyleClass().addAll("terminal-window", currentTheme);
 
-    // Components
     taskListPanel = new TaskListPanel(tasks);
     InputPanel inputPanel = new InputPanel(this::handleCommand);
 
@@ -38,7 +45,7 @@ public class TerminalTodo extends Application {
     Scene scene = new Scene(root, 750, 500);
     scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
 
-    primaryStage.setTitle("user@fedora:~/todo");
+    primaryStage.setTitle("user@linux:~/todo");
     primaryStage.setScene(scene);
     primaryStage.show();
 
@@ -46,61 +53,115 @@ public class TerminalTodo extends Application {
   }
 
   private void handleCommand(String input) {
-    if (input.startsWith("!theme ")) {
-      changeTheme(input.substring(7).toLowerCase());
+    String cleanInput = input.trim();
+    if (cleanInput.isEmpty()) return;
+
+    if (cleanInput.equalsIgnoreCase("exit") || cleanInput.equalsIgnoreCase("!exit")) {
+      Platform.exit();
+      return;
     }
-    else if (input.equalsIgnoreCase("!report")) {
-      new ReportWindow(tasks, DataService.getTheme()).show();
-    }
-    else if (input.equalsIgnoreCase("!clear")) {
+    if (cleanInput.equalsIgnoreCase("clear") || cleanInput.equalsIgnoreCase("!clear")) {
       tasks.clear();
       DataService.saveTasks(tasks);
+      return;
     }
-    else if (input.startsWith("!s ")) {
-      addSubTask(input);
+    if (cleanInput.equalsIgnoreCase("help") || cleanInput.equalsIgnoreCase("!help")) {
+      showHelp();
+      return;
     }
-    else if (input.equalsIgnoreCase("exit")) {
-      Platform.exit();
+
+    Matcher matcher = CMD_PATTERN.matcher(cleanInput);
+    String taskText = cleanInput;
+    String tag = null;
+
+    if (matcher.find()) {
+      taskText = matcher.group(1).trim();
+      tag = matcher.group(2).toLowerCase();
     }
-    else {
-      addTask(input);
+
+    processTask(taskText, tag);
+  }
+
+  private void processTask(String text, String tag) {
+    Task.Priority priority = Task.Priority.NORMAL;
+    String parentId = null;
+
+    if (tag != null) {
+      if (tag.startsWith("sub:")) {
+        parentId = tag.substring(4);
+      } else {
+        switch (tag) {
+          case "high" -> priority = Task.Priority.HIGH;
+          case "critical" -> priority = Task.Priority.CRITICAL;
+          case "low" -> priority = Task.Priority.LOW;
+        }
+      }
+    }
+
+    if (parentId != null) {
+      createSubTask(parentId, text);
+    } else {
+      createTask(text, priority);
     }
   }
 
-  private void changeTheme(String themeName) {
-    if (themeName.equals("dart")) themeName = "dark";
-    String themeClass = "theme-" + themeName;
-    root.getStyleClass().removeAll("theme-gruvbox", "theme-light", "theme-dark", "theme-orange");
-    root.getStyleClass().add(themeClass);
-    DataService.setTheme(themeClass);
-  }
-
-  private void addSubTask(String input) {
-    String[] parts = input.split(" ", 3);
-    if (parts.length == 3) {
-      String idPrefix = parts[1];
-      String subText = parts[2];
-      tasks.stream()
-          .filter(t -> t.getId().startsWith(idPrefix))
-          .findFirst()
-          .ifPresent(parent -> {
-            parent.getSubTasks().add(new Task(subText, Task.Priority.NORMAL));
-            DataService.saveTasks(tasks);
-            taskListPanel.render(); // Explicit re-render needed for subtasks
-          });
-    }
-  }
-
-  private void addTask(String input) {
-    Task.Priority p = Task.Priority.NORMAL;
-    String text = input;
-
-    if (input.startsWith("!c ")) { p = Task.Priority.CRITICAL; text = input.substring(3); }
-    else if (input.startsWith("!h ")) { p = Task.Priority.HIGH; text = input.substring(3); }
-    else if (input.startsWith("!l ")) { p = Task.Priority.LOW; text = input.substring(3); }
-
-    tasks.add(new Task(text.trim(), p));
+  private void createTask(String text, Task.Priority priority) {
+    tasks.add(new Task(text, priority));
     DataService.saveTasks(tasks);
-    // Note: tasks.add triggers the Listener in TaskListPanel, so render() happens automatically
+  }
+
+  private void createSubTask(String parentIdPrefix, String text) {
+    tasks.stream()
+        .filter(t -> t.getId().startsWith(parentIdPrefix))
+        .findFirst()
+        .ifPresentOrElse(parent -> {
+          parent.getSubTasks().add(new Task(text, Task.Priority.NORMAL));
+          DataService.saveTasks(tasks);
+          taskListPanel.render();
+        }, () -> {
+          createTask(text + " (Orphaned subtask)", Task.Priority.NORMAL);
+        });
+  }
+
+  private void showHelp() {
+    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    alert.initOwner(primaryStage);
+    alert.setResizable(true);
+    alert.setTitle("TerminalTodo Help");
+    alert.setHeaderText("COMMAND REFERENCE");
+
+    String helpText = """
+        1. Create Task:
+           $ buy milk
+        
+        2. Set Priority [low|high|critical]:
+           $ buy milk [high]
+           $ fix bug [critical]
+        
+        3. Create Subtask [sub:<parent_id>]:
+           $ check logs [sub:1a2b]
+        
+        4. Edit Task:
+           Double click on existing task description. Edit (press ENTER to save)
+        
+        5. System:
+           $ clear   (Delete all tasks)
+           $ help    (Show this menu)
+           $ exit    (Close app)
+        """;
+
+    TextArea area = new TextArea(helpText);
+    area.setEditable(false);
+    area.setWrapText(true);
+    area.getStyleClass().add("help-console");
+    area.setMaxWidth(Double.MAX_VALUE);
+    area.setMaxHeight(Double.MAX_VALUE);
+
+    var dialogPane = alert.getDialogPane();
+    dialogPane.setContent(area);
+    dialogPane.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
+    dialogPane.getStyleClass().addAll("terminal-window", "theme-dark");
+
+    alert.showAndWait();
   }
 }

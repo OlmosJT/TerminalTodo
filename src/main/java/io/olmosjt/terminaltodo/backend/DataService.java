@@ -39,7 +39,6 @@ public class DataService {
   }
 
   public static String getTheme() {
-    // CHANGED: Select 'conf_value' where 'conf_key' is theme
     String sql = "SELECT conf_value FROM settings WHERE conf_key = 'theme'";
     try (Connection conn = DriverManager.getConnection(DB_URL);
          Statement stmt = conn.createStatement();
@@ -103,7 +102,6 @@ public class DataService {
         if (parent != null && child != null) {
           parent.getSubTasks().add(child);
         } else if (child != null) {
-          // Orphaned subtask -> promote to top level
           topLevel.add(child);
         }
       }
@@ -119,8 +117,7 @@ public class DataService {
     String insertSql = "INSERT INTO tasks (id, text, is_done, is_migrated, created_at, completed_at, priority, parent_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
     try (Connection conn = DriverManager.getConnection(DB_URL)) {
-      conn.setAutoCommit(false); // Start Transaction
-
+      conn.setAutoCommit(false);
       try (Statement stmt = conn.createStatement();
            PreparedStatement ps = conn.prepareStatement(insertSql)) {
 
@@ -133,7 +130,7 @@ public class DataService {
           }
         }
 
-        conn.commit(); // Commit Transaction
+        conn.commit();
       } catch (SQLException e) {
         conn.rollback();
         e.printStackTrace();
@@ -141,6 +138,48 @@ public class DataService {
     } catch (SQLException e) {
       e.printStackTrace();
     }
+  }
+
+  public static void updateTask(Task t) {
+    String sql = "UPDATE tasks SET text=?, is_done=?, completed_at=?, priority=? WHERE id=?";
+    try (Connection conn = DriverManager.getConnection(DB_URL);
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+      ps.setString(1, t.getText());
+      ps.setBoolean(2, t.isDone());
+      ps.setTimestamp(3, t.getCompletedAt() != null ? Timestamp.valueOf(t.getCompletedAt()) : null);
+      ps.setString(4, t.getPriority().name());
+      ps.setString(5, t.getId());
+
+      ps.executeUpdate();
+
+      for (Task sub : t.getSubTasks()) {
+        updateTask(sub);
+      }
+    } catch (SQLException e) { e.printStackTrace(); }
+  }
+
+  // CHANGED: Added single task delete to prevent heavy full-rewrite
+  public static void deleteTask(String id) {
+    // Simple delete. In a real app, you might want to cascade delete subtasks manually
+    // if the DB FK doesn't handle it, but for now we assume this is sufficient or handled by app logic.
+    String sql = "DELETE FROM tasks WHERE id=?";
+    try (Connection conn = DriverManager.getConnection(DB_URL);
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+      ps.setString(1, id);
+      ps.executeUpdate();
+      // Ideally delete orphaned subtasks here too
+      deleteOrphanedSubtasks(id);
+    } catch (SQLException e) { e.printStackTrace(); }
+  }
+
+  private static void deleteOrphanedSubtasks(String parentId) {
+    String sql = "DELETE FROM tasks WHERE parent_id=?";
+    try (Connection conn = DriverManager.getConnection(DB_URL);
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+      ps.setString(1, parentId);
+      ps.executeUpdate();
+    } catch (SQLException e) { e.printStackTrace(); }
   }
 
   private static void insertTask(PreparedStatement ps, Task t, String parentId) throws SQLException {
@@ -155,17 +194,4 @@ public class DataService {
     ps.addBatch();
     ps.executeBatch();
   }
-
-  public static void deleteOldCompletedTasks(int daysOld) {
-    try (Connection conn = DriverManager.getConnection(DB_URL);
-         PreparedStatement ps = conn.prepareStatement(
-             "DELETE FROM tasks WHERE is_done = TRUE AND completed_at < TIMESTAMPADD('DAY', ?, NOW())")) {
-      ps.setInt(1, -daysOld);
-      ps.executeUpdate();
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
-  }
-
-
 }
